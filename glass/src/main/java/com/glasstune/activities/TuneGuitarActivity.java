@@ -22,7 +22,7 @@ import android.widget.AdapterView;
  * and use a {@link com.google.android.glass.touchpad.GestureDetector}.
  * @see <a href="https://developers.google.com/glass/develop/gdk/touch">GDK Developer Guide</a>
  */
-public class MainActivity extends Activity {
+public class TuneGuitarActivity extends Activity {
 
     /** {@link CardScrollView} to use as the main content view. */
     private CardScrollView mCardScroller;
