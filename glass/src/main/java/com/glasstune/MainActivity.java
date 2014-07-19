@@ -1,5 +1,7 @@
 package com.glasstune;
 
+import com.glasstune.tone.Note;
+import com.glasstune.tone.ToneGenerator;
 import com.google.android.glass.app.Card;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.widget.CardScrollAdapter;
