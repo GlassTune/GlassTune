@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tune_view_main_note" type="id" />
+    <item name="tune_view_flat_note" type="id" />
+    <item name="tune_view_sharp_note" type="id" />
+    <item name="tune_view_current_pitch" type="id" />
+</resources>

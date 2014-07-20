@@ -1,6 +1,8 @@
 package com.glasstune.activities;
 
 import com.glasstune.R;
+import com.glasstune.pitch.IPitchDetectorCallback;
+import com.glasstune.pitch.PitchDetector;
 import com.google.android.glass.app.Card;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.widget.CardScrollAdapter;
@@ -23,7 +25,7 @@ import android.widget.AdapterView;
  * and use a {@link com.google.android.glass.touchpad.GestureDetector}.
  * @see <a href="https://developers.google.com/glass/develop/gdk/touch">GDK Developer Guide</a>
  */
-public class TuneGuitarActivity extends Activity {
+public class TuneGuitarActivity extends Activity implements IPitchDetectorCallback{
 
     /** {@link CardScrollView} to use as the main content view. */
     private CardScrollView mCardScroller;
@@ -72,6 +74,10 @@ public class TuneGuitarActivity extends Activity {
             }
         });
         setContentView(mCardScroller);
+
+        PitchDetector pitch = new PitchDetector(this);
+        Thread thread = new Thread(pitch);
+        thread.start();
     }
 
     @Override
