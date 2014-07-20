@@ -6,6 +6,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name">
         <activity
+            android:immersive="true"
             android:name=".activities.TuneGuitarActivity"
             android:icon="@drawable/ic_glass_logo"
             android:label="@string/title_activity_main" >

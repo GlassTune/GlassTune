@@ -16,6 +16,10 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
@@ -76,9 +80,7 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
         mCardScroller.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Plays disallowed sound to indicate that TAP actions are not supported.
-                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                am.playSoundEffect(Sounds.DISALLOWED);
+                openOptionsMenu();
             }
         });
         setContentView(mCardScroller);
@@ -96,9 +98,29 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
 
     @Override
     protected void onPause() {
-        mCardScroller.deactivate();
         _pitchThread.interrupt();
+        mCardScroller.deactivate();
         super.onPause();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.tuner_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.dismiss_menu_item:
+                _pitchThread.interrupt();
+                mCardScroller.deactivate();
+                
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void setDisplayForFrequency(double frequency) {
