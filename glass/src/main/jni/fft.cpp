@@ -83,20 +83,20 @@ int jniRegisterNativeMethods(JNIEnv* env, const char* className,
 {
     jclass clazz;
 
-    LOGV("Registering natives:");
-    LOGV(className);
+    //LOGV("Registering natives:");
+    //LOGV(className);
     clazz = env->FindClass(className);
     if (clazz == NULL) {
-        LOGE("Native registration unable to find class:");
-        LOGE(className);
+        //LOGE("Native registration unable to find class:");
+        //LOGE(className);
         return -1;
     }
     if (env->RegisterNatives(clazz, gMethods, numMethods) < 0) {
-        LOGE("RegisterNatives failed for:");
-        LOGE(className);
+        //LOGE("RegisterNatives failed for:");
+        //LOGE(className);
         return -1;
     }
-    LOGV("Successfully registered natives.");
+    //LOGV("Successfully registered natives.");
     return 0;
 }
 
@@ -113,7 +113,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
         return result;
     }
 
-    jniRegisterNativeMethods(env, "com/example/AndroidTuner/PitchDetector", gMethods, 1);
+    jniRegisterNativeMethods(env, "com/glasstune/pitch/PitchDetector", gMethods, 1);
     return JNI_VERSION_1_4;
 }
 

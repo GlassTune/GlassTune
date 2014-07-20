@@ -96,7 +96,10 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
      * Builds a Glass styled "Hello World!" view using the {@link Card} class.
      */
     private View buildView() {
-        return getLayoutInflater().inflate(R.layout.tune_view,null);
+        Card card = new Card(this);
+
+        card.setText(R.string.hello_world);
+        return card.getView();
     }
 
 }

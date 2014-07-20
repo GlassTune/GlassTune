@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
@@ -54,14 +53,14 @@ public class PitchDetector implements Runnable {
 
     private final static int DRAW_FREQUENCY_STEP = 5;
 
-    public native void DoFFT(double[] data, int size); // an NDK library
+    //public native void DoFFT(double[] data, int size); // an NDK library
     // 'fft-jni'
 
     public PitchDetector(IPitchDetectorCallback callback) {
 
         _callback = callback;
         //_handler = handler;
-        System.loadLibrary("fft-jni");
+        //System.loadLibrary("fft-jni");
     }
 
     private static class FreqResult {
@@ -112,16 +111,21 @@ public class PitchDetector implements Runnable {
         FreqResult fr = new FreqResult();
 
         double[] data = new double[CHUNK_SIZE_IN_SAMPLES * 2];
+        double[] dataImag = new double[CHUNK_SIZE_IN_SAMPLES * 2];
+
         final int min_frequency_fft = Math.round(MIN_FREQUENCY
                 * CHUNK_SIZE_IN_SAMPLES / RATE);
         final int max_frequency_fft = Math.round(MAX_FREQUENCY
                 * CHUNK_SIZE_IN_SAMPLES / RATE);
 
         for (int i = 0; i < CHUNK_SIZE_IN_SAMPLES; i++) {
+            dataImag[i] = 0;
             data[i * 2] = audio_data[i];
             data[i * 2 + 1] = 0;
         }
-        DoFFT(data, CHUNK_SIZE_IN_SAMPLES);
+
+        FFT fft = new FFT(CHUNK_SIZE_IN_SAMPLES);
+        fft.fft(data,dataImag);
 
         double best_frequency = min_frequency_fft;
         HashMap<Double, Double> frequencies = new HashMap<Double, Double>();
