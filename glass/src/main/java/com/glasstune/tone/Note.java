@@ -289,6 +289,47 @@ public enum Note {
         return getOctave(DEFAULT_OCTIVE);
     }
 
+    public static Note getNearestNote(double frequency) {
+
+        Note returnNote = null;
+
+        double minDif = 99999999;
+
+        for(Note note: Note.values()) {
+            double absDif = Math.abs(note.frequency - frequency);
+            if(absDif < minDif) {
+                minDif = absDif;
+                returnNote = note;
+            }
+        }
+
+        return returnNote;
+    }
+
+    public static Note getPreviousNote(Note currentNote) {
+
+        Note prevNote = currentNote;
+
+        for(Note note: Note.values()) {
+
+            if(note == currentNote)
+                break;
+
+            prevNote = note;
+        }
+
+        return prevNote;
+    }
+
+    public static Note getNextNote(Note currentNote) {
+        Note[] notes = Note.values();
+        for(int n=0; n < notes.length;n ++) {
+            if(notes[n] == currentNote)
+               return notes[n+1];
+        }
+        return currentNote;
+    }
+
     /**
      * A musical note.
      *
@@ -312,4 +353,5 @@ public enum Note {
     public String toString() {
        return sharp ? letter + "#" : Character.toString(letter);
     }
+
 }

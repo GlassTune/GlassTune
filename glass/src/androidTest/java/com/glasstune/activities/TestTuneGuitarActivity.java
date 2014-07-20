@@ -1,6 +1,8 @@
 package com.glasstune.activities;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.UiThreadTest;
+import android.test.suitebuilder.annotation.MediumTest;
 import android.view.View;
 import android.widget.TextView;
 
@@ -37,6 +39,24 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
 
         _pitchBar = (View)_activity.findViewById(R.id.tune_view_current_pitch);
         assertNotNull(_pitchBar);
+    }
+
+    @UiThreadTest
+    public void testMainNoteTextIsCWhenFrequencyIs64k() {
+        _activity.setDisplayForFrequency(64.453125);
+        assertEquals("C",_mainNote.getText());
+    }
+
+    @UiThreadTest
+    public void testFlatNoteTextIsBWhenFrequencyIs64k() {
+        _activity.setDisplayForFrequency(64.453125);
+        assertEquals("B",_subNoteFlat.getText());
+    }
+
+    @UiThreadTest
+    public void testSharpNoteTextIsCSharpWhenFrequencyIs64k() {
+        _activity.setDisplayForFrequency(64.453125);
+        assertEquals("C#",_subNoteSharp.getText());
     }
 
 }

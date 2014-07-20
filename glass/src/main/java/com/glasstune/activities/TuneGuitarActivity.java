@@ -3,6 +3,7 @@ package com.glasstune.activities;
 import com.glasstune.R;
 import com.glasstune.pitch.IPitchDetectorCallback;
 import com.glasstune.pitch.PitchDetector;
+import com.glasstune.tone.Note;
 import com.google.android.glass.app.Card;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.widget.CardScrollAdapter;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.TextView;
 
 /**
  * An {@link Activity} showing a tuggable "Hello World!" card.
@@ -75,9 +77,9 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
         });
         setContentView(mCardScroller);
 
-        PitchDetector pitch = new PitchDetector(this);
-        Thread thread = new Thread(pitch);
-        thread.start();
+        //PitchDetector pitch = new PitchDetector(this);
+        //Thread thread = new Thread(pitch);
+        //thread.start();
     }
 
     @Override
@@ -92,14 +94,26 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
         super.onPause();
     }
 
+    public void setDisplayForFrequency(double frequency) {
+        Note mainNote = Note.getNearestNote(frequency);
+        Note sharpNote = Note.getNextNote(mainNote);
+        Note flatNote = Note.getPreviousNote(mainNote);
+
+        TextView mainNoteText = (TextView)findViewById(R.id.tune_view_main_note);
+        mainNoteText.setText(mainNote.toString());
+
+        TextView flatNoteText = (TextView)findViewById(R.id.tune_view_flat_note);
+        flatNoteText.setText(flatNote.toString());
+
+        TextView sharpNoteText = (TextView)findViewById(R.id.tune_view_sharp_note);
+        sharpNoteText.setText(sharpNote.toString());
+    }
+
     /**
      * Builds a Glass styled "Hello World!" view using the {@link Card} class.
      */
     private View buildView() {
-        Card card = new Card(this);
-
-        card.setText(R.string.hello_world);
-        return card.getView();
+        return getLayoutInflater().inflate(R.layout.tune_view,null);
     }
 
 }

@@ -15,7 +15,7 @@ public class NoteCalculatorTest extends TestCase {
     public void testNoteCalcualtorReturnsMainNoteCWhenPitch22220() {
 
         Pitch pitch = null;
-        assertEquals("C",pitch.get_mainNote());
+        assertEquals('C',pitch.get_mainNote());
 
     }
 
