@@ -260,6 +260,7 @@ public class PitchDetector implements Runnable {
     private void PostToUI(final HashMap<Double, Double> frequencies,
                           final double pitch) {
         Log.d(LOG_TAG,"PITCH: " + pitch);
+        _callback.newFrequencyDetected(pitch);
         /*
         _handler.post(new Runnable() {
             public void run() {
