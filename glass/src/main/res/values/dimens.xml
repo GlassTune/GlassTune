@@ -25,6 +25,7 @@
     <dimen name="tune_view_center_line_width">5dp</dimen>
     <dimen name="tune_view_center_line_height">38dp</dimen>
     <dimen name="tune_view_pitch_line_width">3dp</dimen>
-
+    <!-- pitch view -->
+    <dimen name="pitch_note_size">150dp</dimen>
 
 </resources>

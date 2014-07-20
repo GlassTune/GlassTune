@@ -8,6 +8,8 @@ package com.glasstune.tone;
  */
 public class ToneGenerator {
 
+    private ToneGeneratorRunner toneRunner;
+
     /**
      * Create a new instance of a ToneGenerator.
      */
@@ -22,14 +24,19 @@ public class ToneGenerator {
      *
      * @param note The note to be played.
      */
-    public void startPlayingTone(Note note) {
-        final double frequency = note.frequency;
+    public synchronized void startPlayingTone(Note note) {
+        stopPlayingTone();
+        toneRunner = new ToneGeneratorRunner(note.frequency, 1, 8000);
+        new Thread(toneRunner).start();
     }
 
     /**
      * Stop playing any currently playing note if any.
      */
-    public void stopPlayingTone() {
-
+    public synchronized void stopPlayingTone() {
+        if (toneRunner != null) {
+            toneRunner.stop();
+            toneRunner = null;
+        }
     }
 }
