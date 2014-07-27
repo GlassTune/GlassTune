@@ -208,7 +208,7 @@ public class PitchDetector implements Runnable {
                 currentCluster.total_amplitude += nextCluster.total_amplitude;
             }
         }
-`
+
         best_amplitude = 0;
         best_frequency = 0;
         for(int i = 0; i < clusters.size(); i ++) {

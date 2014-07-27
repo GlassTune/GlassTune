@@ -27,6 +27,12 @@ import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import be.hogent.tarsos.dsp.AudioEvent;
+import be.hogent.tarsos.dsp.MicrophoneAudioDispatcher;
+import be.hogent.tarsos.dsp.pitch.PitchDetectionHandler;
+import be.hogent.tarsos.dsp.pitch.PitchDetectionResult;
+import be.hogent.tarsos.dsp.pitch.PitchProcessor;
+
 /**
  * An {@link Activity} showing a tuggable "Hello World!" card.
  * <p>
@@ -36,7 +42,7 @@ import android.widget.TextView;
  * and use a {@link com.google.android.glass.touchpad.GestureDetector}.
  * @see <a href="https://developers.google.com/glass/develop/gdk/touch">GDK Developer Guide</a>
  */
-public class TuneGuitarActivity extends Activity implements IPitchDetectorCallback{
+public class TuneGuitarActivity extends Activity implements PitchDetectionHandler {
 
     /** {@link CardScrollView} to use as the main content view. */
     private CardScrollView mCardScroller;
@@ -85,9 +91,36 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
         });
         setContentView(mCardScroller);
 
-        PitchDetector pitch = new PitchDetector(this);
-        _pitchThread = new Thread(pitch);
-        _pitchThread.start();
+        int sampleRate = 44100;
+        int bufferSize = 1024;
+        int overlap = 512;
+
+        MicrophoneAudioDispatcher dispatcher = new MicrophoneAudioDispatcher(sampleRate,bufferSize,overlap);
+        dispatcher.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, sampleRate, bufferSize, this));
+        new Thread(dispatcher,"Audio dispatching").start();
+
+        //PitchDetector pitch = new PitchDetector(this);
+        //_pitchThread = new Thread(pitch);
+        //_pitchThread.start();
+    }
+
+    @Override
+    public void handlePitch(PitchDetectionResult pitchDetectionResult,AudioEvent audioEvent) {
+        if(pitchDetectionResult.getPitch() != -1){
+            double timeStamp = audioEvent.getTimeStamp();
+            final float pitch = pitchDetectionResult.getPitch();
+            float probability = pitchDetectionResult.getProbability();
+            double rms = audioEvent.getRMS() * 100;
+            String message = String.format("Pitch detected at %.2fs: %.2fHz ( %.2f probability, RMS: %.5f )\n", timeStamp,pitch,probability,rms);
+            Log.d("PITCH",message);
+
+            this.runOnUiThread(new Runnable() {
+                public void run() {
+                    setDisplayForFrequency(pitch);
+                }
+            });
+
+        }
     }
 
     @Override
@@ -153,12 +186,4 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
         return getLayoutInflater().inflate(R.layout.tune_view,null);
     }
 
-    @Override
-    public void newFrequencyDetected(final double frequency) {
-        this.runOnUiThread(new Runnable() {
-            public void run() {
-                setDisplayForFrequency(frequency);
-            }
-        });
-    }
 }
