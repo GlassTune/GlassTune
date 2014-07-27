@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.glasstune.R;
-import com.glasstune.pitch.IPitchDetectorCallback;
 import com.glasstune.tone.Note;
 import com.glasstune.tone.ToneGenerator;
 import com.google.android.glass.media.Sounds;
