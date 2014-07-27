@@ -62,6 +62,7 @@
     <orderEntry type="jdk" jdkName="Android 4.4.2 Glass Development Kit Preview" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="TarsosDSPAndroid-v3" level="project" />
+    <orderEntry type="library" exported="" name="commons-math3-3.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-3.8" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="objenesis-1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="dexmaker-1.1" level="project" />

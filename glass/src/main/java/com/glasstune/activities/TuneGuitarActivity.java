@@ -2,6 +2,7 @@ package com.glasstune.activities;
 
 import com.glasstune.R;
 import com.glasstune.tone.Note;
+import com.glasstune.utils.FrequencySmoother;
 import com.glasstune.utils.NoteCalculator;
 import com.google.android.glass.app.Card;
 import com.google.android.glass.media.Sounds;
@@ -11,6 +12,7 @@ import com.google.android.glass.widget.CardScrollView;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -54,6 +56,8 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
     private MicrophoneAudioDispatcher _dispatcher;
 
     private final double CALLIBRATION = 1.04;
+    private FrequencySmoother _smoother;
+    private Thread _displayUpdater;
 
 
     @Override
@@ -102,11 +106,42 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
         int bufferSize = 1024;
         int overlap = 512;
 
+        _smoother = new FrequencySmoother();
+
         _dispatcher = new MicrophoneAudioDispatcher(sampleRate,bufferSize,overlap);
         _dispatcher.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, sampleRate, bufferSize, this));
         Log.d(TAG, "Start Thread");
         _pitchThread = new Thread(_dispatcher,"Audio dispatching");
         _pitchThread.start();
+
+        final TuneGuitarActivity self = this;
+
+        _displayUpdater = new Thread(new Runnable() {
+            public void run() {
+                while(!_displayUpdater.isInterrupted()) {
+
+                    final double average = _smoother.getSmoothedAverage();
+                    _smoother.clear();
+
+                    if(average > 0) {
+                        self.runOnUiThread(new Runnable() {
+                            public void run() {
+                                setDisplayForFrequency(average);
+                            }
+                        });
+                    }
+
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        _displayUpdater.start();
+
     }
 
     @Override
@@ -118,11 +153,13 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
 
     @Override
     protected void onPause() {
+        Log.d(TAG,"pause");
         hideCard();
         super.onPause();
     }
 
     private void hideCard() {
+        _displayUpdater.interrupt();
         _dispatcher.stop();
         _pitchThread.interrupt();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -188,12 +225,7 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
             String message = String.format("Pitch detected at %.2fs: %.2fHz ( %.2f probability, RMS: %.5f )\n", timeStamp,pitch,probability,rms);
             Log.d(TAG,message);
 
-            this.runOnUiThread(new Runnable() {
-                public void run() {
-                    setDisplayForFrequency(pitch * CALLIBRATION);
-                }
-            });
-
+            _smoother.add(pitch * CALLIBRATION);
         }
     }
 }
