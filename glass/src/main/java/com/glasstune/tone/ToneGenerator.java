@@ -1,5 +1,7 @@
 package com.glasstune.tone;
 
+import android.media.AudioTrack;
+
 /**
  * This is a class responsible for generating tones within the application.
  *
@@ -8,11 +10,15 @@ package com.glasstune.tone;
  */
 public class ToneGenerator {
 
+    private final int SAMPLE_LENGTH = 1;
+    private final int SAMPLE_RATE = 8000;
+    private final AudioTrack tone;
+
     /**
      * Create a new instance of a ToneGenerator.
      */
-    public ToneGenerator() {
-
+    public ToneGenerator(final Note defaultNote) {
+        tone = ToneGeneratorUtil.createSample(defaultNote.frequency, SAMPLE_LENGTH, SAMPLE_RATE);
     }
 
     /**
@@ -22,14 +28,25 @@ public class ToneGenerator {
      *
      * @param note The note to be played.
      */
-    public void startPlayingTone(Note note) {
-        final double frequency = note.frequency;
+    public synchronized void startPlayingTone(Note note) {
+        stopPlayingTone();
+        final byte[] pcm = ToneGeneratorUtil.toPCM(ToneGeneratorUtil.toAmplitudeValues(note.frequency, SAMPLE_LENGTH, SAMPLE_RATE));
+        tone.write(pcm, 0, pcm.length);
+        tone.play();
+    }
+
+    public synchronized void pause() {
+        if (tone.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
+            tone.pause();
+        }
     }
 
     /**
      * Stop playing any currently playing note if any.
      */
-    public void stopPlayingTone() {
-
+    public synchronized void stopPlayingTone() {
+        if (tone.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
+            tone.stop();
+        }
     }
 }

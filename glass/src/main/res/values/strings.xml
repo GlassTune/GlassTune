@@ -6,5 +6,8 @@
     <string name="hello_world">Hello world!</string>
 
     <string name="tune_voice_trigger">tune my guitar</string>
+    <string name="pitch_voice_trigger">Play Pitch</string>
+    
     <string name="dismiss">Dismiss</string>
+
 </resources>

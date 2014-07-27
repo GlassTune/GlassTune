@@ -53,12 +53,14 @@ public class PitchDetector implements Runnable {
 
     private final static int DRAW_FREQUENCY_STEP = 5;
 
+    private FFT fft;
     //public native void DoFFT(double[] data, int size); // an NDK library
     // 'fft-jni'
 
     public PitchDetector(IPitchDetectorCallback callback) {
 
         _callback = callback;
+        fft = new FFT(CHUNK_SIZE_IN_SAMPLES);
         //_handler = handler;
         //System.loadLibrary("fft-jni");
     }
@@ -124,14 +126,11 @@ public class PitchDetector implements Runnable {
             data[i * 2 + 1] = 0;
         }
 
-        FFT fft = new FFT(CHUNK_SIZE_IN_SAMPLES);
+
         fft.fft(data,dataImag);
 
         double best_frequency = min_frequency_fft;
         HashMap<Double, Double> frequencies = new HashMap<Double, Double>();
-
-        //best_frequency = min_frequency_fft;
-        //fr.frequencies = new HashMap<Double, Double>();
 
         double best_amplitude = 0;
         final double draw_frequency_step = 1.0 * RATE / CHUNK_SIZE_IN_SAMPLES;
@@ -141,27 +140,20 @@ public class PitchDetector implements Runnable {
 
         for (int i = min_frequency_fft; i <= max_frequency_fft; i++) {
 
-            final double current_frequency = i * 1.0 * RATE
-                    / CHUNK_SIZE_IN_SAMPLES;
-            final double draw_frequency = Math
-                    .round((current_frequency - MIN_FREQUENCY)
-                            / DRAW_FREQUENCY_STEP)
-                    * DRAW_FREQUENCY_STEP + MIN_FREQUENCY;
+            final double current_frequency = i * 1.0 * RATE / CHUNK_SIZE_IN_SAMPLES;
+            final double draw_frequency =
+                    Math.round((current_frequency - MIN_FREQUENCY) / DRAW_FREQUENCY_STEP) * DRAW_FREQUENCY_STEP + MIN_FREQUENCY;
 
-            final double current_amplitude = Math.pow(data[i * 2], 2)
-                    + Math.pow(data[i * 2 + 1], 2);
+            final double current_amplitude = Math.pow(data[i * 2], 2) + Math.pow(data[i * 2 + 1], 2);
 
-            final double normalized_amplitude = current_amplitude
-                    * Math.pow(MIN_FREQUENCY * MAX_FREQUENCY, 0.5)
-                    / current_frequency;
+            final double normalized_amplitude = current_amplitude * Math.pow(MIN_FREQUENCY * MAX_FREQUENCY, 0.5) / current_frequency;
 
             Double current_sum_for_this_slot = frequencies.get(draw_frequency);
             if (current_sum_for_this_slot == null) {
                 current_sum_for_this_slot = 0.0;
             }
 
-            frequencies.put(draw_frequency, Math.pow(current_amplitude, 0.5)
-                    / draw_frequency_step + current_sum_for_this_slot);
+            frequencies.put(draw_frequency, Math.pow(current_amplitude, 0.5) / draw_frequency_step + current_sum_for_this_slot);
 
             if (normalized_amplitude > best_amplitude) {
                 best_frequency = current_frequency;
@@ -183,7 +175,6 @@ public class PitchDetector implements Runnable {
         FrequencyCluster currentCluster = new FrequencyCluster();
         clusters.add(currentCluster);
         FrequencyCluster bestCluster = currentCluster;
-
 
         if (best_frequencies.size() > 0)
         {
@@ -217,8 +208,7 @@ public class PitchDetector implements Runnable {
                 currentCluster.total_amplitude += nextCluster.total_amplitude;
             }
         }
-
-
+`
         best_amplitude = 0;
         best_frequency = 0;
         for(int i = 0; i < clusters.size(); i ++) {
@@ -261,13 +251,6 @@ public class PitchDetector implements Runnable {
                           final double pitch) {
         Log.d(LOG_TAG,"PITCH: " + pitch);
         _callback.newFrequencyDetected(pitch);
-        /*
-        _handler.post(new Runnable() {
-            public void run() {
-                _callback.ShowPitchDetectionResult(frequencies, pitch);
-            }
-        });
-        */
     }
 
     private void ShowError(final String msg) {

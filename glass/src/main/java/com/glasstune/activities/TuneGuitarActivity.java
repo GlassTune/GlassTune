@@ -98,8 +98,8 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
 
     @Override
     protected void onPause() {
-        _pitchThread.interrupt();
-        mCardScroller.deactivate();
+        //_pitchThread.interrupt();
+        //mCardScroller.deactivate();
         super.onPause();
     }
 
@@ -116,7 +116,7 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
             case R.id.dismiss_menu_item:
                 _pitchThread.interrupt();
                 mCardScroller.deactivate();
-                
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -143,7 +143,6 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectorCallba
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(pitchBar.getWidth(),pitchBar.getHeight());
         params.setMargins((int)leftDP,0,0,0);
-        Log.d("PITCHSTUFF",String.valueOf(leftDP));
         pitchBar.setLayoutParams(params);
     }
 

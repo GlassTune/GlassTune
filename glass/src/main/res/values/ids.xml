@@ -4,4 +4,5 @@
     <item name="tune_view_flat_note" type="id" />
     <item name="tune_view_sharp_note" type="id" />
     <item name="tune_view_current_pitch" type="id" />
+    <item name="pitch_view_note" type="id" />
 </resources>

@@ -9,7 +9,8 @@
             android:immersive="true"
             android:name=".activities.TuneGuitarActivity"
             android:icon="@drawable/ic_glass_logo"
-            android:label="@string/title_activity_main" >
+            android:label="@string/title_activity_main"
+            android:keepScreenOn="true">
             <intent-filter>
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
             </intent-filter>
@@ -17,6 +18,18 @@
             <meta-data
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/tune_trigger" />
+        </activity>
+        <activity
+            android:name=".activities.PlayPitchActivity"
+            android:icon="@drawable/ic_glass_logo"
+            android:label="@string/title_activity_main" >
+            <intent-filter>
+                <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="com.google.android.glass.VoiceTrigger"
+                android:resource="@xml/pitch_trigger" />
         </activity>
     </application>
     <uses-permission
