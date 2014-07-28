@@ -10,6 +10,8 @@
 
 #include <math.h>
 #include <android/log.h>
+#include <cstddef>
+
 
 #include "fft.h"
 
