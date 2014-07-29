@@ -5,26 +5,19 @@ import com.glasstune.tone.Note;
 import com.glasstune.utils.FrequencySmoother;
 import com.glasstune.utils.NoteCalculator;
 import com.google.android.glass.app.Card;
-import com.google.android.glass.media.Sounds;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
 
 import android.app.Activity;
-import android.content.Context;
-import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.PowerManager;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,6 +40,12 @@ import be.hogent.tarsos.dsp.pitch.PitchProcessor;
 public class TuneGuitarActivity extends Activity implements PitchDetectionHandler {
 
     private static final String TAG = "GlassTune";
+
+    private final double CALLIBRATION = 1.04;
+    private final int SAMPLE_RATE = 22050;
+    private final int BUFFER_SIZE = 1024;
+    private final int OVERLAP = 512;
+
     /** {@link CardScrollView} to use as the main content view. */
     private CardScrollView mCardScroller;
 
@@ -55,10 +54,8 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
     private Thread _pitchThread;
     private MicrophoneAudioDispatcher _dispatcher;
 
-    private final double CALLIBRATION = 1.04;
     private FrequencySmoother _smoother;
-    private Thread _displayUpdater;
-
+    private DisplayUpdater _displayUpdater;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -102,46 +99,21 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
         });
         setContentView(mCardScroller);
 
-        int sampleRate = 22050;
-        int bufferSize = 1024;
-        int overlap = 512;
-
         _smoother = new FrequencySmoother();
 
+        startPitchDetection(SAMPLE_RATE, BUFFER_SIZE, OVERLAP);
+
+        _displayUpdater = new DisplayUpdater();
+        _displayUpdater.execute(300);
+
+    }
+
+    private void startPitchDetection(int sampleRate, int bufferSize, int overlap) {
         _dispatcher = new MicrophoneAudioDispatcher(sampleRate,bufferSize,overlap);
         _dispatcher.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, sampleRate, bufferSize, this));
         Log.d(TAG, "Start Thread");
         _pitchThread = new Thread(_dispatcher,"Audio dispatching");
         _pitchThread.start();
-
-        final TuneGuitarActivity self = this;
-
-        _displayUpdater = new Thread(new Runnable() {
-            public void run() {
-                while(!_displayUpdater.isInterrupted()) {
-
-                    final double average = _smoother.getSmoothedAverage();
-                    _smoother.clear();
-
-                    if(average > 0) {
-                        self.runOnUiThread(new Runnable() {
-                            public void run() {
-                                setDisplayForFrequency(average);
-                            }
-                        });
-                    }
-
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-
-        _displayUpdater.start();
-
     }
 
     @Override
@@ -159,7 +131,7 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
     }
 
     private void hideCard() {
-        _displayUpdater.interrupt();
+        _displayUpdater.cancel(false);
         _dispatcher.stop();
         _pitchThread.interrupt();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -182,6 +154,29 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private class DisplayUpdater extends AsyncTask<Integer, Double, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+
+            while(!isCancelled()) {
+                final double average = _smoother.getSmoothedAverage();
+                _smoother.clear();
+                publishProgress(average);
+                try {
+                    Thread.sleep(params[0]);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        protected void onProgressUpdate(double... frequency) {
+            setDisplayForFrequency(frequency[0]);
         }
     }
 
@@ -215,14 +210,15 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
         return getLayoutInflater().inflate(R.layout.tune_view,null);
     }
 
+    /**
+     * Callback for the pitch detection thread, called on new pitch detected
+     */
     @Override
     public void handlePitch(PitchDetectionResult pitchDetectionResult,AudioEvent audioEvent) {
-        if(pitchDetectionResult.getPitch() != -1 && (audioEvent.getRMS() * 100) > 0.5){
-            double timeStamp = audioEvent.getTimeStamp();
-            final float pitch = pitchDetectionResult.getPitch();
-            float probability = pitchDetectionResult.getProbability();
-            double rms = audioEvent.getRMS() * 100;
-            String message = String.format("Pitch detected at %.2fs: %.2fHz ( %.2f probability, RMS: %.5f )\n", timeStamp,pitch,probability,rms);
+        final float pitch = pitchDetectionResult.getPitch();
+
+        if(pitch != -1 && audioEvent.getRMS() > 0.005){
+            String message = String.format("Pitch detected at %.2fs: %.2fHz ( %.2f probability, RMS: %.5f )\n", audioEvent.getTimeStamp(),pitch,pitchDetectionResult.getProbability(),(audioEvent.getRMS() * 100);
             Log.d(TAG,message);
 
             _smoother.add(pitch * CALLIBRATION);
