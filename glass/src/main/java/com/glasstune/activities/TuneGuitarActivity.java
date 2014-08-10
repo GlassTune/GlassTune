@@ -194,7 +194,8 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
             return null;
         }
 
-        protected void onProgressUpdate(double... frequency) {
+        @Override
+        protected void onProgressUpdate(Double... frequency) {
             setDisplayForFrequency(frequency[0]);
         }
 
@@ -202,9 +203,14 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
 
     public void setDisplayForFrequency(double frequency) {
 
+        Log.d(TAG,"Set Display");
+
         Note mainNote = Note.getNearestNote(frequency);
         Note sharpNote = Note.getNextNote(mainNote);
         Note flatNote = Note.getPreviousNote(mainNote);
+
+        if(mainNote == null)
+            return; // no note detected do not update display
 
         TextView mainNoteText = (TextView)findViewById(R.id.tune_view_main_note);
         mainNoteText.setText(mainNote.toString());
@@ -219,15 +225,21 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
         double left = NoteCalculator.getPitchBarPercentage(frequency);
         double leftDP = left * (double)640;
 
+
+        /*
         Transition moveTransition = new ChangeBounds();
         moveTransition.setDuration(250);
         moveTransition.setInterpolator(new LinearInterpolator());
 
         TransitionManager.beginDelayedTransition((ViewGroup)pitchBar.getRootView(), moveTransition);
+        */
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(pitchBar.getWidth(),pitchBar.getHeight());
-        params.setMargins((int)leftDP,0,0,0);
-        pitchBar.setLayoutParams(params);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) pitchBar.getLayoutParams();
+        Log.d(TAG,String.format("Current: %d Left: %f DP: %f",params.leftMargin,left,leftDP));
+
+        //RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(pitchBar.getWidth(),pitchBar.getHeight());
+        //params.setMargins((int)leftDP,0,0,0);
+        //pitchBar.setLayoutParams(params);
 
     }
 

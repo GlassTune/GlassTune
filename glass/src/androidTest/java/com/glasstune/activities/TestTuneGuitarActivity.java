@@ -59,4 +59,10 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
         assertEquals("C#",_subNoteSharp.getText());
     }
 
+    @UiThreadTest
+    public void testNoNoteDetectedDoesNotUpdateDisplay() {
+        _activity.setDisplayForFrequency(0);
+        assertEquals("K",_subNoteSharp.getText());
+    }
+
 }
