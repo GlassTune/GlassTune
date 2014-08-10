@@ -11,6 +11,9 @@ import com.google.android.glass.widget.CardScrollView;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.transition.ChangeBounds;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -59,7 +63,10 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
 
     @Override
     protected void onCreate(Bundle bundle) {
+
         super.onCreate(bundle);
+
+        _smoother = new FrequencySmoother();
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -90,6 +97,7 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
                 return AdapterView.INVALID_POSITION;
             }
         });
+
         // Handle the TAP event.
         mCardScroller.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -97,9 +105,8 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
                 openOptionsMenu();
             }
         });
-        setContentView(mCardScroller);
 
-        _smoother = new FrequencySmoother();
+        setContentView(mCardScroller);
 
         startPitchDetection(SAMPLE_RATE, BUFFER_SIZE, OVERLAP);
 
@@ -109,44 +116,55 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
     }
 
     private void startPitchDetection(int sampleRate, int bufferSize, int overlap) {
+
+        Log.d(TAG, "Start pitch detection");
         _dispatcher = new MicrophoneAudioDispatcher(sampleRate,bufferSize,overlap);
         _dispatcher.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, sampleRate, bufferSize, this));
-        Log.d(TAG, "Start Thread");
         _pitchThread = new Thread(_dispatcher,"Audio dispatching");
         _pitchThread.start();
+
     }
 
     @Override
     protected void onResume() {
+
         super.onResume();
         Log.d(TAG,"resume");
         mCardScroller.activate();
+
     }
 
     @Override
     protected void onPause() {
+
         Log.d(TAG,"pause");
         hideCard();
         super.onPause();
+
     }
 
     private void hideCard() {
+
         _displayUpdater.cancel(false);
         _dispatcher.stop();
         _pitchThread.interrupt();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mCardScroller.deactivate();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.tuner_menu,menu);
         return true;
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch(item.getItemId()) {
             case R.id.dismiss_menu_item:
                 hideCard();
@@ -155,6 +173,7 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
             default:
                 return super.onOptionsItemSelected(item);
         }
+
     }
 
     private class DisplayUpdater extends AsyncTask<Integer, Double, Void> {
@@ -178,9 +197,11 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
         protected void onProgressUpdate(double... frequency) {
             setDisplayForFrequency(frequency[0]);
         }
+
     }
 
     public void setDisplayForFrequency(double frequency) {
+
         Note mainNote = Note.getNearestNote(frequency);
         Note sharpNote = Note.getNextNote(mainNote);
         Note flatNote = Note.getPreviousNote(mainNote);
@@ -198,9 +219,16 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
         double left = NoteCalculator.getPitchBarPercentage(frequency);
         double leftDP = left * (double)640;
 
+        Transition moveTransition = new ChangeBounds();
+        moveTransition.setDuration(250);
+        moveTransition.setInterpolator(new LinearInterpolator());
+
+        TransitionManager.beginDelayedTransition((ViewGroup)pitchBar.getRootView(), moveTransition);
+
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(pitchBar.getWidth(),pitchBar.getHeight());
         params.setMargins((int)leftDP,0,0,0);
         pitchBar.setLayoutParams(params);
+
     }
 
     /**
@@ -215,13 +243,15 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
      */
     @Override
     public void handlePitch(PitchDetectionResult pitchDetectionResult,AudioEvent audioEvent) {
+
         final float pitch = pitchDetectionResult.getPitch();
 
         if(pitch != -1 && audioEvent.getRMS() > 0.005){
-            String message = String.format("Pitch detected at %.2fs: %.2fHz ( %.2f probability, RMS: %.5f )\n", audioEvent.getTimeStamp(),pitch,pitchDetectionResult.getProbability(),(audioEvent.getRMS() * 100);
+            String message = String.format("Pitch detected at %.2fs: %.2fHz ( %.2f probability, RMS: %.5f )\n", audioEvent.getTimeStamp(),pitch,pitchDetectionResult.getProbability(),(audioEvent.getRMS() * 100));
             Log.d(TAG,message);
 
             _smoother.add(pitch * CALLIBRATION);
         }
+
     }
 }

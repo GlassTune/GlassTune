@@ -9,5 +9,7 @@
     <string name="pitch_voice_trigger">Play Pitch</string>
     
     <string name="dismiss">Dismiss</string>
+    <string name="title_activity_tuner">Tune My Guitar</string>
+    <string name="title_activity_pitchpipe">Play Me a Note</string>
 
 </resources>
