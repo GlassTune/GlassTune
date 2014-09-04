@@ -35,6 +35,13 @@ public class ToneGenerator {
         tone.play();
     }
 
+    public synchronized void playFrequency(Double frequency) {
+        stopPlayingTone();
+        final byte[] pcm = ToneGeneratorUtil.toPCM(ToneGeneratorUtil.toAmplitudeValues(frequency, SAMPLE_LENGTH, SAMPLE_RATE));
+        tone.write(pcm, 0, pcm.length);
+        tone.play();
+    }
+
     public synchronized void pause() {
         if (tone.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
             tone.pause();
