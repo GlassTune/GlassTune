@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class FrequencySmoother {
 
     private final double DEVIATION = 0.02;
-
+    private Object _lock = new Object();
     private ArrayList<Double> _freqs;
 
     public FrequencySmoother() {
@@ -18,7 +18,9 @@ public class FrequencySmoother {
     }
 
     public void add(double frequency) {
-        _freqs.add(frequency);
+        synchronized (_lock) {
+            _freqs.add(frequency);
+        }
     }
 
     public void clear() {
@@ -26,25 +28,27 @@ public class FrequencySmoother {
     }
 
     public double getSmoothedAverage() {
-        if(_freqs.size() == 0)
-            return -1;
+        synchronized (_lock) {
+            if (_freqs.size() == 0)
+                return -1;
 
-        DescriptiveStatistics stats = new DescriptiveStatistics();
+            DescriptiveStatistics stats = new DescriptiveStatistics();
 
-        for(double freq : _freqs) {
-            stats.addValue(freq);
-        }
-
-        double median = stats.getPercentile(50);
-
-        stats = new DescriptiveStatistics();
-        for(double freq : _freqs) {
-            if(Math.abs((1 - (freq/median))) <= DEVIATION) {
+            for (double freq : _freqs) {
                 stats.addValue(freq);
             }
-        }
 
-        return stats.getMean();
+            double median = stats.getPercentile(50);
+
+            stats = new DescriptiveStatistics();
+            for (double freq : _freqs) {
+                if (Math.abs((1 - (freq / median))) <= DEVIATION) {
+                    stats.addValue(freq);
+                }
+            }
+
+            return stats.getMean();
+        }
     }
 
 }

@@ -8,8 +8,8 @@
         <activity
             android:immersive="true"
             android:name=".activities.TuneGuitarActivity"
-            android:icon="@drawable/ic_glass_logo"
-            android:label="@string/title_activity_main">
+            android:icon="@drawable/ic_action_guitar"
+            android:label="@string/title_activity_tuner">
             <intent-filter>
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
             </intent-filter>
@@ -20,8 +20,8 @@
         </activity>
         <activity
             android:name=".activities.PlayPitchActivity"
-            android:icon="@drawable/ic_glass_logo"
-            android:label="@string/title_activity_main" >
+            android:icon="@drawable/ic_action_music_1"
+            android:label="@string/title_activity_pitchpipe" >
             <intent-filter>
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
             </intent-filter>
