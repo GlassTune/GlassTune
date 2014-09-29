@@ -12,7 +12,24 @@ public class NoteCalculator {
         Note flatNote = Note.getPreviousNote(currentNote);
         Note sharpNote = Note.getNextNote(currentNote);
 
-        return (frequency - flatNote.frequency) / (sharpNote.frequency - flatNote.frequency);
+        if(flatNote == Note.UNKNOWN || sharpNote == Note.UNKNOWN)
+            return 0.0;
+
+        if(currentNote.frequency == frequency) {
+            return 0.5;
+        }else if(currentNote.frequency > frequency) {
+            double value = (currentNote.frequency - frequency) / (currentNote.frequency - flatNote.frequency);
+            return round2DP(value/2);
+        }else if(currentNote.frequency < frequency) {
+            double value = (currentNote.frequency - frequency) / (currentNote.frequency - sharpNote.frequency);
+            return round2DP((value + 0.5));
+        }
+
+        return 0.0;
+    }
+
+    private static double round2DP(double value) {
+        return Math.round(value * 100) / 100D;
     }
 
 }

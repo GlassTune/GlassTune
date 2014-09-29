@@ -227,7 +227,9 @@ public enum Note {
 
     A8S('A', 8, true, 7458.62),
 
-    B8('B', 8, false, 7902.13);
+    B8('B', 8, false, 7902.13),
+
+    UNKNOWN('U', 0, false, 0.0);
 
     /**
      * The number of notes in an octave.
@@ -308,6 +310,9 @@ public enum Note {
 
     public static Note getPreviousNote(Note currentNote) {
 
+        if(currentNote == Note.A0 || currentNote == Note.UNKNOWN)
+            return Note.UNKNOWN;
+
         Note prevNote = currentNote;
 
         for(Note note: Note.values()) {
@@ -322,12 +327,17 @@ public enum Note {
     }
 
     public static Note getNextNote(Note currentNote) {
+
+        if(currentNote == Note.UNKNOWN)
+            return Note.UNKNOWN;
+
         Note[] notes = Note.values();
-        for(int n=0; n < notes.length;n ++) {
-            if(notes[n] == currentNote)
-               return notes[n+1];
+        for(int n=0; n < notes.length - 1;n ++) {
+            if(notes[n] == currentNote) {
+                return notes[n + 1];
+            }
         }
-        return currentNote;
+        return Note.UNKNOWN;
     }
 
     /**

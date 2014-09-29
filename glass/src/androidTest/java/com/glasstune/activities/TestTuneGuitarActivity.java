@@ -62,7 +62,7 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
     @UiThreadTest
     public void testNoNoteDetectedDoesNotUpdateDisplay() {
         _activity.setDisplayForFrequency(0);
-        assertEquals("K",_subNoteSharp.getText());
+        assertEquals("J#",_subNoteSharp.getText());
     }
 
 }
