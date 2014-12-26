@@ -9,7 +9,7 @@ repositories {
 
 android {
     compileSdkVersion "Google Inc.:Glass Development Kit Preview:19"
-    buildToolsVersion "20.0.0"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         applicationId "com.glasstune"
@@ -18,9 +18,16 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
-            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
