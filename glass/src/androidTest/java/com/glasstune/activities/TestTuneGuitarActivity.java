@@ -42,27 +42,15 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
     }
 
     @UiThreadTest
-    public void testMainNoteTextIsCWhenFrequencyIs64k() {
-        _activity.setDisplayForFrequency(64.453125);
-        assertEquals("C",_mainNote.getText());
-    }
-
-    @UiThreadTest
-    public void testFlatNoteTextIsBWhenFrequencyIs64k() {
-        _activity.setDisplayForFrequency(64.453125);
-        assertEquals("B",_subNoteFlat.getText());
-    }
-
-    @UiThreadTest
-    public void testSharpNoteTextIsCSharpWhenFrequencyIs64k() {
-        _activity.setDisplayForFrequency(64.453125);
-        assertEquals("C#",_subNoteSharp.getText());
+    public void testMainNoteTextIsCWhenFrequencyIs398k() {
+        _activity.setDisplayForFrequency(398);
+        assertEquals("G",_mainNote.getText());
     }
 
     @UiThreadTest
     public void testNoNoteDetectedDoesNotUpdateDisplay() {
         _activity.setDisplayForFrequency(0);
-        assertEquals("J#",_subNoteSharp.getText());
+        assertEquals("?",_mainNote.getText());
     }
 
 }

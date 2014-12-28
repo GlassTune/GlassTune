@@ -73,8 +73,6 @@ public class PlayPitchActivity extends Activity {
                 // Plays disallowed sound to indicate that TAP actions are not supported.
                 AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 am.playSoundEffect(Sounds.DISALLOWED);
-
-
             }
         });
         setContentView(mCardScroller);

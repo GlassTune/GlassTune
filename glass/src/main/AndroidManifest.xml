@@ -18,6 +18,7 @@
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/tune_trigger" />
         </activity>
+        <!--
         <activity
             android:name=".activities.PlayPitchActivity"
             android:icon="@drawable/ic_action_music_1"
@@ -30,6 +31,7 @@
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/pitch_trigger" />
         </activity>
+        -->
     </application>
     <uses-permission
         android:name="com.google.android.glass.permission.DEVELOPMENT" />

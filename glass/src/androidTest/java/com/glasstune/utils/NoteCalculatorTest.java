@@ -2,6 +2,7 @@ package com.glasstune.utils;
 
 import android.test.suitebuilder.annotation.SmallTest;
 
+import com.glasstune.tone.FrequencyRange;
 import com.glasstune.tone.Note;
 
 import junit.framework.TestCase;
@@ -12,24 +13,34 @@ import junit.framework.TestCase;
 public class NoteCalculatorTest extends TestCase {
 
     @SmallTest
-    public void testNoteCalcualtorReturns50WhenNoteC() {
-        double percent = NoteCalculator.getPitchBarPercentage(Note.C2.frequency);
-        assertEquals(0.5,percent);
+    public void testGetFrequencyRangeReturnsCorrectValue() {
+        FrequencyRange range = NoteCalculator.getFrequencyRange(Note.B4, Note.A4S, Note.C5);
+        assertEquals(480.02, range.getLowerFrequency());
+        assertEquals(508.565, range.getUpperFrequency());
     }
 
-    public void testNoteCalcualtorReturns25WhenNoteHalfwayBetweenCAndB() {
-        double percent = NoteCalculator.getPitchBarPercentage(63.575);
-        assertEquals(0.25,percent);
+    @SmallTest
+    public void testNoteCalcualtorReturns320WhenNoteC() {
+        double pos = NoteCalculator.getPitchBarPosition(Note.C2.frequency,640);
+        assertEquals(320.0,pos);
     }
 
-    public void testNoteCalcualtorReturns75WhenNoteHalfwayBetweenCAndCSharp() {
-        double percent = NoteCalculator.getPitchBarPercentage(66.188);
-        assertEquals(0.70,percent);
+    @SmallTest
+    public void testNoteCalcualtorReturns160WhenNoteHalfwayBetweenBflatAndB() {
+        double pos = NoteCalculator.getPitchBarPosition(60.8725, 640);
+        assertEquals(160.0,pos);
     }
 
+    @SmallTest
+    public void testNoteCalcualtorReturns480WhenNoteHalfwayBetweenBAndC() {
+        double pos = NoteCalculator.getPitchBarPosition(62.6575, 640);
+        assertEquals(480.0,pos);
+    }
+
+    @SmallTest
     public void testWhenNoNoteFoundReturns0() {
-        double percent = NoteCalculator.getPitchBarPercentage(600000);
-        assertEquals(0.0,percent);
+        double pos = NoteCalculator.getPitchBarPosition(600000, 640);
+        assertEquals(0.0,pos);
     }
 
     //156.40

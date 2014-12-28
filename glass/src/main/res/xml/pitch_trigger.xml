@@ -1,2 +1,4 @@
 <!-- For more information about voice trigger, check out: https://developers.google.com/glass/develop/gdk/starting-glassware -->
-<trigger keyword="play pitch" />
+<trigger keyword="Play a note">
+    <input prompt="Try C sharp" />
+</trigger>

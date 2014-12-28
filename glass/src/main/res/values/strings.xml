@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">GlassTune</string>
-    <string name="title_activity_main">Hello World Immersion</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Guitar tuner for Glass</string>
 
-    <string name="tune_voice_trigger">tune my guitar</string>
-    <string name="pitch_voice_trigger">Play Pitch</string>
-    
     <string name="dismiss">Dismiss</string>
-    <string name="title_activity_tuner">Tune My Guitar</string>
-    <string name="title_activity_pitchpipe">Play Me a Note</string>
+    <string name="title_activity_tuner">Tune An instrument</string>
+    <string name="title_activity_pitchpipe">Play a note</string>
+    <string name="initial_note_display">\?</string>
+    <string name="flat_note_display">b</string>
+    <string name="sharp_note_display">#</string>
 
 </resources>

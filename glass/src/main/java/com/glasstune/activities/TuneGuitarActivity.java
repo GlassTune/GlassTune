@@ -5,10 +5,13 @@ import com.glasstune.tone.Note;
 import com.glasstune.utils.FrequencySmoother;
 import com.glasstune.utils.NoteCalculator;
 import com.google.android.glass.app.Card;
+import com.google.android.glass.media.Sounds;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
 
 import android.app.Activity;
+import android.content.Context;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.ChangeBounds;
@@ -16,8 +19,6 @@ import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -45,7 +46,7 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
 
     private static final String TAG = "GlassTune";
 
-    private final double CALLIBRATION = 1.04;
+    private final double CALLIBRATION = 1;
     private final int SAMPLE_RATE = 22050;
     private final int BUFFER_SIZE = 1024;
     private final int OVERLAP = 512;
@@ -137,7 +138,7 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
     @Override
     protected void onPause() {
 
-        Log.d(TAG,"pause");
+        Log.d(TAG, "pause");
         hideCard();
         super.onPause();
 
@@ -155,25 +156,9 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.tuner_menu,menu);
-        return true;
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch(item.getItemId()) {
-            case R.id.dismiss_menu_item:
-                hideCard();
-                finish(); // close the activity
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
+        AudioManager audio = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        audio.playSoundEffect(Sounds.DISALLOWED);
+        return false;
     }
 
     private class DisplayUpdater extends AsyncTask<Integer, Double, Void> {
@@ -207,38 +192,31 @@ public class TuneGuitarActivity extends Activity implements PitchDetectionHandle
         Note sharpNote = Note.getNextNote(mainNote);
         Note flatNote = Note.getPreviousNote(mainNote);
 
+        TextView mainNoteText = (TextView)findViewById(R.id.tune_view_main_note);
+
         if(mainNote == null || mainNote == Note.UNKNOWN) {
             Log.d(TAG,"Nothing to update");
+            String unkownLabel = getResources().getString(R.string.initial_note_display);
+            mainNoteText.setText(unkownLabel);
             return; // no note detected do not update display
         }
 
+        Log.d(TAG,"Detected Note:" + mainNote.toString() + " from freq: " + frequency);
 
-        TextView mainNoteText = (TextView)findViewById(R.id.tune_view_main_note);
         mainNoteText.setText(mainNote.toString());
 
-        TextView flatNoteText = (TextView)findViewById(R.id.tune_view_flat_note);
-        flatNoteText.setText(flatNote.toString());
-
-        TextView sharpNoteText = (TextView)findViewById(R.id.tune_view_sharp_note);
-        sharpNoteText.setText(sharpNote.toString());
-
         View pitchBar = (View)findViewById(R.id.tune_view_current_pitch);
-        double left = NoteCalculator.getPitchBarPercentage(frequency);
-        double leftDP = left * (double)640;
-
-
+        int margin = 35;
+        double leftDP = NoteCalculator.getPitchBarPosition(frequency, 640 - (margin * 2));
 
         Transition moveTransition = new ChangeBounds();
-        moveTransition.setDuration(250);
+        moveTransition.setDuration(300);
         moveTransition.setInterpolator(new LinearInterpolator());
 
         TransitionManager.beginDelayedTransition((ViewGroup)pitchBar.getRootView(), moveTransition);
-        
-        //RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) pitchBar.getLayoutParams();
-
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(pitchBar.getWidth(),pitchBar.getHeight());
-        Log.d(TAG,String.format("Current: %d Left: %f DP: %f",params.leftMargin,left,leftDP));
+        Log.d(TAG,String.format("Current: %d DP: %f",params.leftMargin,leftDP));
         params.setMargins((int)leftDP,0,0,0);
         pitchBar.setLayoutParams(params);
 

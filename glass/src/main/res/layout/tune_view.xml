@@ -9,10 +9,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="H#"
+        android:text="@string/flat_note_display"
         android:textSize="@dimen/tune_view_sub_note_size"
         android:layout_alignParentBottom="true"
-        android:id="@id/tune_view_flat_note"/>
+        android:id="@+id/tune_view_flat_note"/>
 
     <View
         android:layout_width="@dimen/tune_view_center_line_width"
@@ -24,7 +24,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="K"
+        android:text="@string/initial_note_display"
         android:textSize="@dimen/tune_view_main_note_size"
         android:layout_centerInParent="true"
         android:id="@id/tune_view_main_note" />
@@ -39,11 +39,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="J#"
         android:textSize="@dimen/tune_view_sub_note_size"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:id="@id/tune_view_sharp_note"/>
+        android:id="@+id/tune_view_sharp_note"
+        android:text="@string/sharp_note_display" />
 
     <View
         android:layout_width="@dimen/tune_view_pitch_line_width"

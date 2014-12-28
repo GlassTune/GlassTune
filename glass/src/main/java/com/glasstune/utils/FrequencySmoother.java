@@ -29,7 +29,7 @@ public class FrequencySmoother {
 
     public double getSmoothedAverage() {
         synchronized (_lock) {
-            if (_freqs.size() == 0)
+            if (_freqs == null || _freqs.size() == 0)
                 return -1;
 
             DescriptiveStatistics stats = new DescriptiveStatistics();

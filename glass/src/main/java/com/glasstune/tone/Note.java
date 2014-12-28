@@ -129,7 +129,7 @@ public enum Note {
 
     A4('A', 4, false, 440.00),
 
-    A4S('A', 4, true, 416.16),
+    A4S('A', 4, true, 466.16),
 
     B4('B', 4, false, 493.88),
 
@@ -291,8 +291,10 @@ public enum Note {
         return getOctave(DEFAULT_OCTIVE);
     }
 
+    /*
+     * Returns the nearest note to this frequency
+     */
     public static Note getNearestNote(double frequency) {
-
         Note returnNote = null;
 
         double minDif = 99999999;
@@ -307,6 +309,32 @@ public enum Note {
 
         return returnNote;
     }
+
+    /*
+     * Returns the nearest whole note to this frequency, i.e will never return a sharp
+     */
+    public static Note getNearestWholeToneNote(double frequency) {
+
+        Note returnNote = getNearestNote(frequency);
+
+        // if this is a sharp return the closest whole note
+        if(returnNote.sharp) {
+            Note previousNote = getPreviousNote(returnNote);
+            Note nextNote = getNextNote(returnNote);
+            double dif = returnNote.frequency - frequency;
+
+            if(dif < 0) {
+                return previousNote;
+            } else {
+                return nextNote;
+            }
+        }
+
+        return returnNote;
+
+    }
+
+
 
     public static Note getPreviousNote(Note currentNote) {
 
@@ -361,7 +389,15 @@ public enum Note {
      * @return A String representation of the note.
      */
     public String toString() {
-       return sharp ? letter + "#" : Character.toString(letter);
+
+        if(letter == 'A' && sharp) {
+            return "Bb";
+        } else if(letter == 'D' && sharp) {
+            return "Eb";
+        } else {
+            return sharp ? letter + "#" : Character.toString(letter);
+        }
+
     }
 
 }
