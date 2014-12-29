@@ -123,20 +123,25 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectionHandl
     @Override
     protected void onPause() {
         Log.d(TAG, "pause");
+        stopPitchDetection();
         hideCard();
         super.onPause();
+    }
+
+    private void hideCard() {
+        stopPitchDetection();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mCardScroller.deactivate();
+    }
+
+    private void stopPitchDetection() {
+        _pitchDetection.stop();
     }
 
     private void startPitchDetection() {
         Log.d(TAG, "Start pitch detection");
         _pitchDetection.setDelegate(this);
         _pitchDetection.start();
-    }
-
-    private void hideCard() {
-        _pitchDetection.stop();
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        mCardScroller.deactivate();
     }
 
     @Override

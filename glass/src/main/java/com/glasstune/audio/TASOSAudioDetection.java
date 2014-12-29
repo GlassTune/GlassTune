@@ -35,8 +35,7 @@ public class TASOSAudioDetection implements IPitchDetection, PitchDetectionHandl
     }
 
     public TASOSAudioDetection() {
-        _dispatcher = new MicrophoneAudioDispatcher(SAMPLE_RATE,BUFFER_SIZE,OVERLAP);
-        _smoother = new FrequencySmoother();
+
     }
 
     @Override
@@ -46,6 +45,9 @@ public class TASOSAudioDetection implements IPitchDetection, PitchDetectionHandl
 
     @Override
     public void start() {
+        _dispatcher = new MicrophoneAudioDispatcher(SAMPLE_RATE,BUFFER_SIZE,OVERLAP);
+        _smoother = new FrequencySmoother();
+
         _updater = new Updater();
         _updater.execute(_updateInterval);
 
@@ -57,8 +59,8 @@ public class TASOSAudioDetection implements IPitchDetection, PitchDetectionHandl
     @Override
     public void stop() {
         _dispatcher.stop();
-        _pitchThread.interrupt();
 
+        _pitchThread.interrupt();
         _updater.cancel(false);
     }
 
