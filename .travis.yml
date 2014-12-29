@@ -1,5 +1,9 @@
 sudo: false
-
+env:
+  global:
+      - secure: "GTpFf/1qzygJMurZ+xTFgZEp15t53o1Hc0FCQWSKfx7GEiq9CFMB/9VWLLYev4k8Yh7Fvepfmx7qA/U9fYDdETpBr8Itb/RWCy6SzEq2wJc1vWk/rXc7c2aQnbNY83iykiTNn2PzV7UkxWCXJcEtt+0jFwVSFUiQ3nujgdzQc5s="
+      - secure: "jxy8Uhr1hThZHsnusNJNGKEjiZnuDAzCYPCJc/jpGlSyNduI0ShWp2x2KVYerigtBbo5xVIOTUP631d8Ze6k+kVUITtwFu9Ivw0w4pWCKUQ9Y1zOEridwxY57NYkEfd4AnqLwtM6l9EFfGz/LzzBLWxRy1bl8HIiYy7DjKP9sgk="
+      - secure: "TUPU5tMzrmVRexqvHCXuHiugzPZsx7VyZhENzhPbpb8qSvasilOx7NaQRyC9m8Pm2NgB8Vl76rObBA5UgJ4aFt05e0vBAV6jLJvOUnBWnIAtVScT9f3aUOrYZzODRKYw6SzKgskAiptaVeVv9H36G4fGs1c1G+lLP0d+CM4aDvk="
 language: android
 
 android:
@@ -13,13 +17,13 @@ licenses:
   - google-gdk-license-9529f459
 
 script:
-  - ./gradlew assemble
+  - ./gradlew assembleRelease
 
 deploy:
   provider: releases
   api-key:
     secure: bkWePIKomwz1uXrhg9Tqj9Ch7DS627K39eFTjNuwtn01kX7pEcxwt8wnSwlAhZP1M/NwTMxHtepc6H5cUKRAWOITuiRA6YVHYgZk6kcET2gsee4eGfWQhSz95/ANmQz1lr2EitHLp+nwAK2cmfiwA+eq3PhViYbrE9IkIx0+38o=
-  file: ./glass/build/outputs/apk/glass-debug.apk
+  file: ./glass/build/outputs/apk/glass-release.apk
   skip_cleanup: true
   on:
     tags: true

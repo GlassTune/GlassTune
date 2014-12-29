@@ -11,6 +11,16 @@ android {
     compileSdkVersion "Google Inc.:Glass Development Kit Preview:19"
     buildToolsVersion "21.1.2"
 
+    signingConfigs {
+        release {
+            // We can leave these in environment variables
+            storeFile file("../assets/glasstuner.jks")
+            keyAlias System.getenv("KEY_ALIAS")
+            storePassword System.getenv("STORE_PASSWORD")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
+
     defaultConfig {
         applicationId "com.glasstune"
         minSdkVersion 19
@@ -28,6 +38,7 @@ android {
             testCoverageEnabled true
         }
         release {
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
