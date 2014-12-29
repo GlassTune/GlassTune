@@ -22,7 +22,7 @@ script:
 deploy:
   provider: releases
   api-key:
-    secure: bkWePIKomwz1uXrhg9Tqj9Ch7DS627K39eFTjNuwtn01kX7pEcxwt8wnSwlAhZP1M/NwTMxHtepc6H5cUKRAWOITuiRA6YVHYgZk6kcET2gsee4eGfWQhSz95/ANmQz1lr2EitHLp+nwAK2cmfiwA+eq3PhViYbrE9IkIx0+38o=
+    secure: O8K8JFh48kkm3Sw/k4WwEyGZ2+X7+m8/GcPTh0e3NpmifwWR1tCHESo3MSMfMdM9qvxzG2OjuJDphqcIyMwM0BEySsJo3X4X8JVfH1YINFTo4thzC6FHwdMDUD7OqYPBr/5KuFcgaXb0bUFAq6WcYvwBvR0kiMW2JUKao9RzF/M=
   file: ./glass/build/outputs/apk/glass-release.apk
   skip_cleanup: true
   on:
