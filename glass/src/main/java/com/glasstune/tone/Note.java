@@ -231,6 +231,8 @@ public enum Note {
 
     UNKNOWN('U', 0, false, 0.0);
 
+    private static final double MAX_FREQUENCY = Note.B8.frequency;
+
     /**
      * The number of notes in an octave.
      */
@@ -296,6 +298,10 @@ public enum Note {
      */
     public static Note getNearestNote(double frequency) {
         Note returnNote = null;
+
+        if(frequency > MAX_FREQUENCY) {
+            return Note.UNKNOWN;
+        }
 
         double minDif = 99999999;
 

@@ -1,55 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="20dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/flat_note_display"
-        android:textSize="@dimen/tune_view_sub_note_size"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/tune_view_flat_note"/>
-
-    <View
-        android:layout_width="@dimen/tune_view_center_line_width"
-        android:layout_height="@dimen/tune_view_center_line_height"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:background="#ffffffff" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/initial_note_display"
-        android:textSize="@dimen/tune_view_main_note_size"
-        android:layout_centerInParent="true"
-        android:id="@id/tune_view_main_note" />
-
-    <View
-        android:layout_width="@dimen/tune_view_center_line_width"
-        android:layout_height="@dimen/tune_view_center_line_height"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="#ffffffff" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/tune_view_sub_note_size"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:id="@+id/tune_view_sharp_note"
-        android:text="@string/sharp_note_display" />
-
-    <View
-        android:layout_width="@dimen/tune_view_pitch_line_width"
-        android:layout_marginLeft="100dp"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ff950000"
-        android:id="@id/tune_view_current_pitch"/>
+        android:padding="20dp">
 
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/flat_note_display"
+            android:textSize="@dimen/tune_view_sub_note_size"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/tune_view_flat_note"/>
+
+        <View
+            android:layout_width="@dimen/tune_view_center_line_width"
+            android:layout_height="@dimen/tune_view_center_line_height"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="#ffffffff" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="@dimen/tune_view_main_note_size"
+            android:layout_centerInParent="true"
+            android:id="@id/tune_view_main_note" />
+
+        <View
+            android:layout_width="@dimen/tune_view_center_line_width"
+            android:layout_height="@dimen/tune_view_center_line_height"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="#ffffffff" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/tune_view_sub_note_size"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:id="@+id/tune_view_sharp_note"
+            android:text="@string/sharp_note_display" />
+
+        <View
+            android:layout_width="@dimen/tune_view_pitch_line_width"
+            android:layout_marginLeft="100dp"
+            android:layout_height="match_parent"
+            android:background="#ff950000"
+            android:id="@id/tune_view_current_pitch"/>
+
+    </RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        android:background="#ff000000"
+        android:alpha="0.7"
+        android:id="@+id/tune_view_overlay">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/initial_overlay_text"
+            android:textSize="@dimen/tune_view_no_note_text_size"
+            android:layout_centerInParent="true"
+            android:id="@+id/tune_view_overlay_text" />
+    </RelativeLayout>
+</FrameLayout>

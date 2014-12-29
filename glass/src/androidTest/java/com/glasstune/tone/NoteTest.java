@@ -10,6 +10,12 @@ import junit.framework.TestCase;
 public class NoteTest extends TestCase {
 
     @SmallTest
+    public void testWhenFrequencyisOverMaxFrequencyReturnNoNote() {
+        Note note = Note.getNearestNote(800000);
+        assertEquals(Note.UNKNOWN,note);
+    }
+
+    @SmallTest
     public void testNoteIsGSharpWhenFrequencyis406k() {
         Note note = Note.getNearestNote(406);
         assertEquals('G',note.letter);
