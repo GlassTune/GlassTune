@@ -5,12 +5,7 @@ language: android
 android:
   components:
   - build-tools-21.1.2
-  - android-21
-  - sys-img-armeabi-v7a-android-21
-  - extra-google-google_play_services
-  - extra-android-support
-  - extra-android-m2repository
-  - extra-google-m2repository
+  - android-19
   - addon-google_gdk-google-19
 
 licenses:
@@ -18,11 +13,7 @@ licenses:
   - google-gdk-license-9529f459
 
 script:
-  - adb logcat -c
   - ./gradlew assemble
-
-after_failure:
-  - adb logcat -d E
 
 deploy:
   provider: releases
