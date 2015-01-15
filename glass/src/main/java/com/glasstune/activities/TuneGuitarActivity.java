@@ -175,7 +175,6 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectionHandl
         Log.d(TAG,"Detected Note:" + mainNote.toString() + " from freq: " + frequency);
 
         mainNoteText.setText(mainNote.toString());
-
         setPitchBarPosition(frequency);
 
         hideOverlay();
