@@ -5,7 +5,7 @@
 
     <style name="pitch_marking">
         <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:textSize">34px</item>
+        <item name="android:textSize">38px</item>
     </style>
 
     <style name="main_note">

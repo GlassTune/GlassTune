@@ -10,7 +10,7 @@
     <string name="no_note_footnote">play a note to continue</string>
     <string name="initial_overlay_text">Play a note</string>
     <string name="initial_overlay_footnote">pluck a string on your guitar to start the tuner</string>
-    <string name="flat_note_display">b</string>
+    <string name="flat_note_display">♭</string>
     <string name="sharp_note_display">#</string>
 
 </resources>

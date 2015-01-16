@@ -26,7 +26,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -197,8 +196,8 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectionHandl
 
     private void setPitchBarPosition(double frequency) {
         View pitchBar = (View)findViewById(R.id.tune_view_current_pitch);
-        int margin = 35;
-        double leftDP = NoteCalculator.getPitchBarPosition(frequency, 640 - (margin * 2));
+        int margin = 20;
+        double leftDP = NoteCalculator.getPitchBarPosition(frequency, 560);
 
         Transition moveTransition = new ChangeBounds();
         moveTransition.setDuration(300);
@@ -206,8 +205,8 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectionHandl
 
         TransitionManager.beginDelayedTransition((ViewGroup) pitchBar.getRootView(), moveTransition);
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(pitchBar.getWidth(),pitchBar.getHeight());
-        Log.d(TAG, String.format("Current: %d DP: %f", params.leftMargin, leftDP));
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams)(pitchBar.getLayoutParams());
+        Log.d(TAG, String.format("Current: %d New: %f", params.leftMargin, leftDP));
         params.setMargins((int)leftDP,0,0,0);
         pitchBar.setLayoutParams(params);
     }

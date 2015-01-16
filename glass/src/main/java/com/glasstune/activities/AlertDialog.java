@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.touchpad.Gesture;
@@ -49,6 +50,8 @@ public class AlertDialog extends Dialog {
                 (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mGestureDetector =
                 new GestureDetector(context).setBaseListener(mBaseListener);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(new CardBuilder(context, CardBuilder.Layout.ALERT)
                 .setIcon(iconResId)
