@@ -5,7 +5,7 @@ import com.glasstune.application.GlassTuneApplication;
 import com.glasstune.audio.IPitchDetection;
 import com.glasstune.audio.IPitchDetectionHandler;
 import com.glasstune.tone.Note;
-import com.glasstune.utils.FrequencySmoother;
+import com.glasstune.utils.IAlertDialogBuilder;
 import com.glasstune.utils.NoteCalculator;
 import com.google.android.glass.app.Card;
 import com.google.android.glass.media.Sounds;
@@ -15,7 +15,6 @@ import com.google.android.glass.widget.CardScrollView;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
@@ -31,12 +30,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import javax.inject.Inject;
-
-import be.hogent.tarsos.dsp.AudioEvent;
-import be.hogent.tarsos.dsp.MicrophoneAudioDispatcher;
-import be.hogent.tarsos.dsp.pitch.PitchDetectionHandler;
-import be.hogent.tarsos.dsp.pitch.PitchDetectionResult;
-import be.hogent.tarsos.dsp.pitch.PitchProcessor;
 
 /**
  * An {@link Activity} showing a tuggable "Hello World!" card.
@@ -60,8 +53,11 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectionHandl
     private View mView;
 
     @Inject IPitchDetection _pitchDetection;
+    @Inject IAlertDialogBuilder _alertDialogBuilder;
 
     private int _noNoteCount = 0;
+    private boolean _noteDetected = false;
+    private AlertDialog _dialog = null;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -109,6 +105,7 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectionHandl
         });
 
         setContentView(mCardScroller);
+        createAndShowDialog(R.drawable.ic_action_guitar_150, R.string.initial_overlay_text, R.string.initial_overlay_footnote);
         startPitchDetection();
         Log.d("TAG", "Created View");
     }
@@ -163,9 +160,9 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectionHandl
 
         if(mainNote == null || mainNote == Note.UNKNOWN) {
 
-            if(_noNoteCount >= 9) {
-                showOverlay(getString(R.string.no_note_text));
-                mainNoteText.setText("");
+            if(_noNoteCount == 9 && _noteDetected) {
+                hideDialog();
+                createAndShowDialog(R.drawable.ic_warning_150, R.string.no_note_text, R.string.no_note_footnote);
             }
 
             _noNoteCount ++;
@@ -177,22 +174,25 @@ public class TuneGuitarActivity extends Activity implements IPitchDetectionHandl
         mainNoteText.setText(mainNote.toString());
         setPitchBarPosition(frequency);
 
-        hideOverlay();
+        hideDialog();
         _noNoteCount = 0;
+        _noteDetected = true;
     }
 
-    protected void showOverlay(String text) {
-        RelativeLayout overlay = (RelativeLayout)findViewById(R.id.tune_view_overlay);
-        overlay.setVisibility(View.VISIBLE);
-
-        TextView overlay_text = (TextView)findViewById(R.id.tune_view_overlay_text);
-        overlay_text.setText(text);
+    protected void createAndShowDialog(int iconResID, int textResId, int footnoteResId) {
+        _dialog = _alertDialogBuilder.setContext(TuneGuitarActivity.this)
+                .setText(textResId)
+                .setFootnote(footnoteResId)
+                .setIcon(iconResID)
+                .build();
+        _dialog.show();
     }
 
-    protected void hideOverlay() {
-        RelativeLayout overlay = (RelativeLayout)findViewById(R.id.tune_view_overlay);
-
-        overlay.setVisibility(View.INVISIBLE);
+    protected void hideDialog() {
+        if(_dialog != null) {
+            _dialog.dismiss();
+            _dialog = null;
+        }
     }
 
     private void setPitchBarPosition(double frequency) {

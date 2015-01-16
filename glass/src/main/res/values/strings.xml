@@ -7,7 +7,9 @@
     <string name="title_activity_tuner">Tune An instrument</string>
     <string name="title_activity_pitchpipe">Play a note</string>
     <string name="no_note_text">No note detected</string>
+    <string name="no_note_footnote">play a note to continue</string>
     <string name="initial_overlay_text">Play a note</string>
+    <string name="initial_overlay_footnote">pluck a string on your guitar to start the tuner</string>
     <string name="flat_note_display">b</string>
     <string name="sharp_note_display">#</string>
 

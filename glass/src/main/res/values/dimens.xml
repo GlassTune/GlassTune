@@ -2,6 +2,9 @@
 
 <resources>
 
+    <dimen name="glass_card_width">640px</dimen>
+    <dimen name="glass_card_height">360px</dimen>
+
     <!-- The recommended margin for the top, left, and right edges of a card. -->
     <dimen name="glass_card_margin">40px</dimen>
 
@@ -20,12 +23,9 @@
     <dimen name="glass_card_left_column_width">240px</dimen>
 
     <!-- tune view -->
-    <dimen name="tune_view_sub_note_size">40dp</dimen>
-    <dimen name="tune_view_main_note_size">100dp</dimen>
-    <dimen name="tune_view_center_line_width">5dp</dimen>
+    <dimen name="tune_view_center_line_width">5px</dimen>
     <dimen name="tune_view_center_line_height">38dp</dimen>
-    <dimen name="tune_view_pitch_line_width">3dp</dimen>
-    <dimen name="tune_view_no_note_text_size">40dp</dimen>
+    <dimen name="tune_view_pitch_line_width">3px</dimen>
     <!-- pitch view -->
     <dimen name="pitch_note_size">150dp</dimen>
 

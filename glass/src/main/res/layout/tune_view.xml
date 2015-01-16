@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="@dimen/glass_card_width"
+    android:layout_height="@dimen/glass_card_height"
+    android:paddingLeft="@dimen/glass_card_margin"
+    android:paddingTop="@dimen/glass_card_margin"
+    android:paddingRight="@dimen/glass_card_margin"
+    android:paddingBottom="@dimen/glass_card_footer_margin">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/flat_note_display"
-            android:textSize="@dimen/tune_view_sub_note_size"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/tune_view_flat_note"/>
-
+        android:layout_height="@dimen/glass_card_body_height">
         <View
             android:layout_width="@dimen/tune_view_center_line_width"
             android:layout_height="@dimen/tune_view_center_line_height"
@@ -28,8 +22,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="@dimen/tune_view_main_note_size"
+            android:text="G"
+            style="@style/main_note"
             android:layout_centerInParent="true"
             android:id="@id/tune_view_main_note" />
 
@@ -40,36 +34,31 @@
             android:layout_centerHorizontal="true"
             android:background="#ffffffff" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/tune_view_sub_note_size"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:id="@+id/tune_view_sharp_note"
-            android:text="@string/sharp_note_display" />
-
         <View
             android:layout_width="@dimen/tune_view_pitch_line_width"
             android:layout_marginLeft="100dp"
             android:layout_height="match_parent"
             android:background="#ff950000"
             android:id="@id/tune_view_current_pitch"/>
-
     </RelativeLayout>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="20dp"
-        android:background="#b4000000"
-        android:id="@+id/tune_view_overlay">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="40px"
+        android:layout_gravity="bottom">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/initial_overlay_text"
-            android:textSize="@dimen/tune_view_no_note_text_size"
-            android:layout_centerInParent="true"
-            android:id="@+id/tune_view_overlay_text" />
+            android:text="@string/flat_note_display"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/tune_view_flat_note"
+            style="@style/pitch_marking" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:id="@+id/tune_view_sharp_note"
+            android:text="@string/sharp_note_display"
+            style="@style/pitch_marking" />
     </RelativeLayout>
 </FrameLayout>

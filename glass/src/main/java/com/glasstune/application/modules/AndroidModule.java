@@ -12,6 +12,8 @@ import dagger.Provides;
 import com.glasstune.activities.TuneGuitarActivity;
 import com.glasstune.audio.IPitchDetection;
 import com.glasstune.audio.TASOSAudioDetection;
+import com.glasstune.utils.AlertDialogBuilder;
+import com.glasstune.utils.IAlertDialogBuilder;
 
 /**
  * Created by server on 30/03/2014.
@@ -23,4 +25,6 @@ public class AndroidModule {
         return new TASOSAudioDetection();
     }
 
+    @Provides
+    IAlertDialogBuilder provideAlertDialogBuilder() {return new AlertDialogBuilder(); }
 }

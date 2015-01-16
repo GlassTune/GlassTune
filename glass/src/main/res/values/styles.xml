@@ -2,4 +2,14 @@
 <resources>
     <style name="AppTheme" parent="android:Theme.Holo.Light">
     </style>
+
+    <style name="pitch_marking">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">34px</item>
+    </style>
+
+    <style name="main_note">
+        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:textSize">102px</item>
+    </style>
 </resources>

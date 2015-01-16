@@ -14,14 +14,10 @@ import dagger.ObjectGraph;
  */
 public class GlassTuneApplication extends Application {
 
-    private ObjectGraph _graph;
+    protected ObjectGraph _graph;
 
     @Override public void onCreate() {
         super.onCreate();
-    }
-
-    public void setObjectGraph(ObjectGraph graph) {
-        _graph = graph;
     }
 
     protected Object[] getModules() {

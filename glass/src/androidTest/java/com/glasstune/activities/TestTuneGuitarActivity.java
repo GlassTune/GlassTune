@@ -1,20 +1,19 @@
 package com.glasstune.activities;
 
-import android.location.LocationManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.UiThreadTest;
-import android.test.suitebuilder.annotation.MediumTest;
 import android.test.suitebuilder.annotation.SmallTest;
-import android.transition.Visibility;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.glasstune.R;
-import com.glasstune.application.GlassTuneApplication;
+import com.glasstune.application.TestApplication;
 import com.glasstune.application.modules.AndroidModule;
 import com.glasstune.audio.IPitchDetection;
 import com.glasstune.audio.IPitchDetectionHandler;
+import com.glasstune.utils.IAlertDialogBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,9 +23,12 @@ import dagger.ObjectGraph;
 import dagger.Provides;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by server on 19/07/14.
@@ -38,9 +40,9 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
     private TextView _subNoteSharp;
     private TextView _mainNote;
     private View _pitchBar;
-    private RelativeLayout _overlay;
-    private TextView _overlay_text;
-    private GlassTuneApplication _app;
+    private TestApplication _app;
+    private static IAlertDialogBuilder _mockAlertDialogBuilder;
+    private static AlertDialog _mockAlertDialog;
 
     @Inject IPitchDetection _pitchDetection;
 
@@ -56,6 +58,11 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
         IPitchDetection providePitchDetection() {
             return mock(IPitchDetection.class);
         }
+
+        @Provides
+        IAlertDialogBuilder provideAlertDialogBuilder() {
+            return _mockAlertDialogBuilder;
+        }
     }
 
     public TestTuneGuitarActivity() {
@@ -67,9 +74,11 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
         super.setUp();
 
         System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath());
-        _app = (GlassTuneApplication)getInstrumentation().getTargetContext().getApplicationContext();
+        _app = (TestApplication)getInstrumentation().getTargetContext().getApplicationContext();
         _app.setObjectGraph(ObjectGraph.create(TestModule.class));
         _app.inject(this);
+
+        setUpMocks();
 
         _activity = getActivity();
 
@@ -84,12 +93,18 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
 
         _pitchBar = _activity.findViewById(R.id.tune_view_current_pitch);
         assertNotNull(_pitchBar);
+    }
 
-        _overlay = (RelativeLayout) _activity.findViewById(R.id.tune_view_overlay);
-        assertNotNull(_overlay);
+    private void setUpMocks() {
+        _mockAlertDialogBuilder = mock(IAlertDialogBuilder.class);
+        _mockAlertDialog = mock(AlertDialog.class);
 
-        _overlay_text = (TextView) _activity.findViewById(R.id.tune_view_overlay_text);
-        assertNotNull(_overlay_text);
+        when(_mockAlertDialogBuilder.setContext(any(Context.class))).thenReturn(_mockAlertDialogBuilder);
+        when(_mockAlertDialogBuilder.setFootnote(anyInt())).thenReturn(_mockAlertDialogBuilder);
+        when(_mockAlertDialogBuilder.setIcon(anyInt())).thenReturn(_mockAlertDialogBuilder);
+        when(_mockAlertDialogBuilder.setOnClickListener(any(DialogInterface.OnClickListener.class))).thenReturn(_mockAlertDialogBuilder);
+        when(_mockAlertDialogBuilder.setText(anyInt())).thenReturn(_mockAlertDialogBuilder);
+        when(_mockAlertDialogBuilder.build()).thenReturn(_mockAlertDialog);
     }
 
     @SmallTest
@@ -103,25 +118,28 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
     }
 
     @UiThreadTest
-    public void testOverlayisPresentOnStart() {
-        assertEquals(View.VISIBLE,_overlay.getVisibility());
+    public void testAlertDialogisPresentOnStart() {
+        verify(_mockAlertDialog,times(1)).show();
     }
 
     @UiThreadTest
-    public void testOverlayInitialTextSetToPlayANoteOnStart() {
-        String text = getActivity().getString(R.string.initial_overlay_text);
-        assertEquals(text,_overlay_text.getText());
+    public void testAlertDialogIsSetupOnStart() {
+        verify(_mockAlertDialogBuilder,times(1)).setContext(_activity);
+        verify(_mockAlertDialogBuilder,times(1)).setIcon(R.drawable.ic_action_guitar_150);
+        verify(_mockAlertDialogBuilder,times(1)).setText(R.string.initial_overlay_text);
+        verify(_mockAlertDialogBuilder,times(1)).setFootnote(R.string.initial_overlay_footnote);
+        verify(_mockAlertDialogBuilder,times(1)).build();
     }
 
     @UiThreadTest
     public void testOverlayHiddenWhenNoteReceived() {
         _activity.setDisplayForFrequency(398);
 
-        assertEquals(View.INVISIBLE,_overlay.getVisibility());
+        verify(_mockAlertDialog, times(1)).dismiss();
     }
 
     @UiThreadTest
-    public void testOverlayTextWhenNoNoteRecognised10Times() {
+    public void testShowsAlertDialogWhenNoNoteRecognised10Times() {
         String text = getActivity().getString(R.string.no_note_text);
 
         _activity.setDisplayForFrequency(398);
@@ -129,18 +147,37 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
         for (int n=0; n < 10; n++)
             _activity.setDisplayForFrequency(60000);
 
-        assertEquals(text,_overlay_text.getText());
-        assertEquals(View.VISIBLE,_overlay.getVisibility());
+        verify(_mockAlertDialogBuilder,times(2)).setContext(_activity);
+        verify(_mockAlertDialogBuilder,times(1)).setIcon(R.drawable.ic_warning_150);
+        verify(_mockAlertDialogBuilder,times(1)).setText(R.string.no_note_text);
+        verify(_mockAlertDialogBuilder,times(1)).setFootnote(R.string.no_note_footnote);
+        verify(_mockAlertDialogBuilder,times(2)).build();
+        verify(_mockAlertDialog,times(2)).show();
     }
 
     @UiThreadTest
-    public void testOverlayTextDoesNotShowWhenNoNoteRecognisedLessThan10Times() {
+    public void testDoesNotShowsAlertDialogWhenNoNoteRecognised10TimesIfNoInitialNoteDetected() {
+        String text = getActivity().getString(R.string.no_note_text);
+
+        for (int n=0; n < 10; n++)
+            _activity.setDisplayForFrequency(60000);
+
+        verify(_mockAlertDialogBuilder,times(1)).setContext(_activity);
+        verify(_mockAlertDialogBuilder,times(0)).setIcon(R.drawable.ic_warning_150);
+        verify(_mockAlertDialogBuilder,times(0)).setText(R.string.no_note_text);
+        verify(_mockAlertDialogBuilder,times(0)).setFootnote(R.string.no_note_footnote);
+        verify(_mockAlertDialogBuilder,times(1)).build();
+        verify(_mockAlertDialog,times(1)).show();
+    }
+
+    @UiThreadTest
+    public void testDoesNotShowAlertDialogWhenNoNoteRecognisedLessThan10Times() {
         _activity.setDisplayForFrequency(398);
 
         for (int n=0; n < 9; n++)
             _activity.setDisplayForFrequency(60000);
 
-        assertEquals(View.INVISIBLE,_overlay.getVisibility());
+        verify(_mockAlertDialog, times(1)).show();
     }
 
     @UiThreadTest
@@ -151,8 +188,9 @@ public class TestTuneGuitarActivity extends ActivityInstrumentationTestCase2<Tun
 
     @UiThreadTest
     public void testNoNoteDetectedDoesNotUpdateDisplay() {
+        _activity.setDisplayForFrequency(398);
         _activity.setDisplayForFrequency(0);
-        assertEquals("",_mainNote.getText());
+        assertEquals("G",_mainNote.getText());
     }
 
 }
